@@ -433,7 +433,7 @@ DynamicTemplate.prototype._setLookupHost = function (host) {
 
   if (self._lookupHostValue !== host) {
     self._lookupHostValue = host;
-    Deps.afterFlush(function () {
+    Tracker.afterFlush(function () {
       // if the lookup host changes and the template also changes
       // before the next flush cycle, this gives the new template
       // a chance to render, and the old template to be torn off

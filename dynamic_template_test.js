@@ -4,7 +4,7 @@ String.prototype.compact = function () {
 
 var ReactiveVar = function (value) {
   this._value = value;
-  this._dep = new Deps.Dependency;
+  this._dep = new Tracker.Dependency;
 };
 
 ReactiveVar.prototype.get = function () {
@@ -21,7 +21,7 @@ ReactiveVar.prototype.set = function (value) {
 
 ReactiveVar.prototype.clear = function () {
   this._value = null;
-  this._dep = new Deps.Dependency;
+  this._dep = new Tracker.Dependency;
 };
 
 // a reactive template variable we can use
@@ -44,7 +44,7 @@ var withRenderedTemplate = function (template, callback) {
   withDiv(function (el) {
     template = _.isString(template) ? Template[template] : template;
     Blaze.render(template, el);
-    Deps.flush();
+    Tracker.flush();
     callback(el);
   });
 };
@@ -110,14 +110,14 @@ Tinytest.add('DynamicTemplate - Dynamic rendering with no data', function (test)
 
     // change the reactive template variable
     reactiveTemplate.set('One');
-    Deps.flush();
+    Tracker.flush();
 
     // new template should be on the page
     test.equal(el.innerHTML.compact(), 'One');
 
     // change it again!
     reactiveTemplate.set('Two');
-    Deps.flush();
+    Tracker.flush();
     test.equal(el.innerHTML.compact(), 'Two');
 
     // be a good citizen
@@ -142,7 +142,7 @@ Tinytest.add('DynamicTemplate - Rendering with dynamic data', function (test) {
 
     // now set the data
     reactiveData.set('1');
-    Deps.flush();
+    Tracker.flush();
 
     // should not re-render
     test.equal(renderCount, 1);
@@ -152,7 +152,7 @@ Tinytest.add('DynamicTemplate - Rendering with dynamic data', function (test) {
 
     // now set the data again
     reactiveData.set('2');
-    Deps.flush();
+    Tracker.flush();
 
     // should not re-render
     test.equal(renderCount, 1);
@@ -182,7 +182,7 @@ Tinytest.add('DynamicTemplate - Rendering with dynamic parent data', function (t
 
     // now set the data
     reactiveData.set('1');
-    Deps.flush();
+    Tracker.flush();
 
     // should not re-render
     test.equal(renderCount, 1);
@@ -192,7 +192,7 @@ Tinytest.add('DynamicTemplate - Rendering with dynamic parent data', function (t
 
     // now set the data again
     reactiveData.set('2');
-    Deps.flush();
+    Tracker.flush();
 
     // should not re-render
     test.equal(renderCount, 1);
@@ -223,7 +223,7 @@ Tinytest.add('DynamicTemplate - Rendering with dynamic parent data from Template
 
     // now set the data
     reactiveData.set('1');
-    Deps.flush();
+    Tracker.flush();
 
     // should not re-render
     test.equal(renderCount, 1);
@@ -233,7 +233,7 @@ Tinytest.add('DynamicTemplate - Rendering with dynamic parent data from Template
 
     // now set the data again
     reactiveData.set('2');
-    Deps.flush();
+    Tracker.flush();
 
     // should not re-render
     test.equal(renderCount, 1);
@@ -261,12 +261,12 @@ Tinytest.add('DynamicTemplate - Block content', function (test) {
 
     // now set a template
     reactiveTemplate.set('One');
-    Deps.flush();
+    Tracker.flush();
     test.equal(el.innerHTML.compact(), 'One');
 
     // go back to the default
     reactiveTemplate.set(undefined);
-    Deps.flush();
+    Tracker.flush();
     test.equal(el.innerHTML.compact(), 'default');
   });
 });
@@ -286,17 +286,17 @@ Tinytest.add('DynamicTemplate - From JavaScript', function (test) {
     test.equal(el.innerHTML.compact(), 'One');
 
     tmpl.template('WithData');
-    Deps.flush();
+    Tracker.flush();
     test.equal(el.innerHTML.compact(), 'WithData-1');
 
     // make sure reactivity works with data
     reactiveData.set('2');
-    Deps.flush();
+    Tracker.flush();
     test.equal(el.innerHTML.compact(), 'WithData-2');
 
     // now reset the data value completely
     tmpl.data('3');
-    Deps.flush();
+    Tracker.flush();
     test.equal(el.innerHTML.compact(), 'WithData-3');
 
     reactiveData.clear();
@@ -312,19 +312,19 @@ Tinytest.add('DynamicTemplate - default template', function (test) {
     test.equal(el.innerHTML.compact(), 'One', 'default template not set from options');
 
     tmpl.template('Two');
-    Deps.flush();
+    Tracker.flush();
     test.equal(el.innerHTML.compact(), 'Two', 'default template not replaced');
 
     tmpl.template(false);
-    Deps.flush();
+    Tracker.flush();
     test.equal(el.innerHTML.compact(), 'One', 'fallback to default');
 
     tmpl.template(null);
-    Deps.flush();
+    Tracker.flush();
     test.equal(el.innerHTML.compact(), 'One', 'fallback to default');
 
     tmpl.template(undefined);
-    Deps.flush();
+    Tracker.flush();
     test.equal(el.innerHTML.compact(), 'One', 'fallback to default');
   });
 });
@@ -437,8 +437,8 @@ Tinytest.add('DynamicTemplate - lookup hosts', function (test) {
     // then add a controller
     tmpl._setLookupHost(new Controller);
 
-    Deps.flush();
-    Deps.afterFlush(function () {
+    Tracker.flush();
+    Tracker.afterFlush(function () {
       test.equal(counter, 1);
       test.equal(helperRunCount, 1);
       test.equal(el.innerHTML.compact(), '1');

@@ -34,7 +34,6 @@ Package.on_test(function (api) {
   api.use('tinytest');
   api.use('test-helpers');
   api.use('blaze');
-  api.use('deps');
 
   api.add_files('dynamic_template_test.html', 'client');
   api.add_files('dynamic_template_test.js', 'client');
