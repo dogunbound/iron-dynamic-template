@@ -6,7 +6,7 @@ Package.describe({
 });
 
 Package.on_use(function (api) {
-  api.versionsFrom('METEOR@1.8.1');
+  api.versionsFrom('METEOR@2.0');
 
   api.use('blaze');
   api.use('underscore');
@@ -27,7 +27,7 @@ Package.on_use(function (api) {
 });
 
 Package.on_test(function (api) {
-  api.versionsFrom('METEOR@1.8.1');
+  api.versionsFrom('METEOR@2.0');
 
   api.use('iron:dynamic-template');
   api.use('templating');
